@@ -29,6 +29,7 @@ rule_test(
     name = "test-library-simple",
     size = "small",
     generates = [
+        "LibSimple.purs",
         "library-simple.purs-package",
         "library-simple@repl",
     ],
@@ -39,6 +40,7 @@ rule_test(
     name = "test-library-dependencies",
     size = "small",
     generates = [
+        "LibDeps.purs",
         "library-dependencies.purs-package",
         "library-dependencies@repl",
     ],
@@ -51,6 +53,7 @@ rule_test(
     generates = [
         "library-prefix.purs-package",
         "library-prefix@repl",
+        "src/LibPrefix.purs",
     ],
     rule = "//tests/library-prefix",
 )
@@ -60,7 +63,8 @@ rule_test(
     size = "small",
     generates = [
         "library-transitive.purs-package",
-        "library-transitive@repl"
+        "library-transitive@repl",
+        "src/LibTrans.purs",
     ],
     rule = "//tests/library-transitive",
 )
@@ -70,7 +74,9 @@ rule_test(
     size = "small",
     generates = [
         "library-foreign.purs-package",
-        "library-foreign@repl"
+        "library-foreign@repl",
+        "src/LibForeign.js",
+        "src/LibForeign.purs",
     ],
     rule = "//tests/library-foreign",
 )

@@ -29,12 +29,10 @@ load(
     "@bazel_skylib//lib:paths.bzl",
     "paths",
 )
-
 load(
     "@bazel_skylib//lib:shell.bzl",
     "shell",
 )
-
 load(
     ":context.bzl",
     "purescript_context",
@@ -174,7 +172,7 @@ def _purescript_bundle_impl(ctx):
     return [
         PureScriptBundleInfo(
             bundle = bundle,
-        )
+        ),
     ]
 
 purescript_bundle = rule(
@@ -189,7 +187,6 @@ Build a bundle from PureScript sources.
         "foreign_srcs": _ATTRS.foreign_srcs,
         "src_strip_prefix": _ATTRS.src_strip_prefix,
         "deps": _ATTRS.deps,
-
         "_repl_template": _ATTRS._repl_template,
     },
     outputs = {
@@ -249,7 +246,7 @@ def _purescript_library_impl(ctx):
 
     return [
         DefaultInfo(
-            files = depset(transitive = [ctx_p.srcs, ctx_p.foreign_srcs]),
+            files = depset(transitive = [ctx_p.srcs, ctx_p.foreign_srcs, depset([ctx.outputs.package, ctx.outputs.repl])]),
         ),
         PureScriptLibraryInfo(
             package = package,
@@ -257,7 +254,7 @@ def _purescript_library_impl(ctx):
             foreign_srcs = ctx_p.foreign_srcs,
             transitive_srcs = ctx_p.transitive_srcs,
             transitive_foreign_srcs = ctx_p.transitive_foreign_srcs,
-        )
+        ),
     ]
 
 def _purescript_build_library(
@@ -273,7 +270,7 @@ def _purescript_build_library(
     repl):
 
     if ps.psci_support:
-        psci_support_files = " ".join([f.path for f in ps.psci_support.files])
+        psci_support_files = " ".join([f.path for f in ps.psci_support.files.to_list()])
     else:
         psci_support_files = ""
 
@@ -290,7 +287,7 @@ def _purescript_build_library(
     ctx.actions.run_shell(
         mnemonic = mnemonic,
         progress_message = progress_message,
-        inputs = ctx_p.transitive_srcs + ctx_p.transitive_foreign_srcs,
+        inputs = depset(transitive = [ctx_p.transitive_srcs, ctx_p.transitive_foreign_srcs]),
         outputs = [package],
         tools = [
             purs,
@@ -383,7 +380,6 @@ Build a library from PureScript sources.
         "foreign_srcs": _ATTRS.foreign_srcs,
         "src_strip_prefix": _ATTRS.src_strip_prefix,
         "deps": _ATTRS.deps,
-
         "_repl_template": _ATTRS._repl_template,
     },
     outputs = {
